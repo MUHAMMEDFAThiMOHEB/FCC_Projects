@@ -1,11 +1,16 @@
 import math
-def add_time(start, addition , day = None):
+def add_time(start: str, addition: str , day: str = None) -> str:
     time_items = start.split(" ")
     time_t = time_items[0].split(":")
     time_t = list(map(int, time_t))
     time_dur = time_items[1]
     dur_add = addition.split(":")
     dur_add = list(map(int, dur_add))
+    total_min = dur_add[1] + time_t[1]
+    extra_hours = math.floor(total_min/60)
+    final_min = total_min%60
+    total_hours = time_t[0] + dur_add[0] + extra_hours
+    final_hours = total_hours%24
     days = {                     # this dictionary will be used in a feature applyed in the future
         1 : "saturday",
         2 : "sunday",
@@ -15,18 +20,16 @@ def add_time(start, addition , day = None):
         6 : "thursday",
         7 : "friday"
     }
-    total_min = dur_add[1] + time_t[1]
-    extra_hours = math.floor(total_min/60)
-    final_min = total_min%60
-    total_hours = time_t[0] + dur_add[0] + extra_hours
-    final_hours = total_hours%24
     if final_hours > 12:
         final_hours = final_hours - 12
     
-
     if time_dur.lower() == "pm":
-        limit_hr = 12 - time_t[0]
-        limit_min = 60 - time_t[1]
+        if time_t[1] != 0:
+            limit_hr = 11 - time_t[0]
+            limit_min = 60 - time_t[1]
+        else:
+            limit_hr = 12 - time_t[0]
+            limit_min = 60 - time_t[1]
 
     else:
         limit_hr = 12 + (12 - time_t[0])
@@ -41,10 +44,14 @@ def add_time(start, addition , day = None):
         if time_dur.upper() == "AM": # check if the added time will convert AM to PM
             limit_mid_hr = limit_hr -12
             limit_mid_min = 60 - time_t[1]
+            print(limit_hr, limit_min)
+            print(limit_mid_hr, limit_mid_min)
             if dur_add[0] > limit_mid_hr or (dur_add[0] <= limit_mid_hr and dur_add[1] > limit_mid_min): 
                 time_dur = "PM"  
             else:
                 time_dur = "AM"
+        else:
+            time_dur = "PM"
         return result
     
     elif dur_add[0] == limit_hr:
