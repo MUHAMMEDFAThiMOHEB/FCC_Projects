@@ -76,20 +76,26 @@ def add_time(start: str, addition: str , day: str = None):
         for key, value in days.items():
             if day != None and value == day.lower():
                 holdkey = key
-        new_day_key = (holdkey + nofdays) % 7
-        result_day = days[new_day_key]
-        print(result_day)
+                new_day_key = (holdkey + nofdays) % 7
+                result_day = days[new_day_key]
+
         # tomorrow (Just the next day)
         if remains_hr < 12: 
             time_dur = "AM"
-            
+        if remains_hr > 12 and remains_hr < 24:
+            time_dur = "PM"
+            remain_hr -= 12
+        if day != None:
+            result = f"{remains_hr}:{remains_min:02} {time_dur} {result_day} (next day)"
+        else:
+            result = f"{final_hours}:{final_min:02} {time_dur} (next day)"
 
-    return " "
+    return result
 #* testing the output
 
 # print(add_time('3:00 PM', '3:10'))                         # 6:10 PM
 # print(add_time('11:30 AM', '2:32', 'Monday'))              # 2:02 PM, Monday
 # print(add_time('11:43 AM', '00:20'))                       # 12:03 PM
 print(add_time('10:10 PM', '3:30'))                        # 1:40 AM (next day)
-print(add_time('11:43 PM', '24:20', 'tueSday'))            # 12:03 AM, Thursday (2 days later)
-print(add_time('6:30 PM', '205:12'))                       # 7:42 AM (9 days later)
+# print(add_time('11:43 PM', '24:20', 'tueSday'))            # 12:03 AM, Thursday (2 days later)
+# print(add_time('6:30 PM', '205:12'))                       # 7:42 AM (9 days later)
