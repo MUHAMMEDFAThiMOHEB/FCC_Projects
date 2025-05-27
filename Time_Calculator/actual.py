@@ -56,69 +56,40 @@ def add_time(start: str, addition: str , day: str = None):
             result = f"{final_hours}:{final_min:02} {time_dur}"
 
 
-    else:
-        pass
-    # days = {                     
-    #     1 : "saturday",
-    #     2 : "sunday",
-    #     3 : "monday",
-    #     4 : "tuseday",
-    #     5 : "wednesday",
-    #     6 : "thursday",
-    #     7 : "friday"
-    # }
-    # if final_hours > 12:
-    #     final_hours = final_hours - 12
-    
+    else: # case when time added will pass the current day (day or more after)
+        remains_hr = dur_add[0] - hr_teod
+        remains_min = dur_add[1] - min_teod
+        if remains_min < 0:
+            remains_hr -= 1
+            remains_min = 60 - abs(remains_min) # Now / Once we reached this step we are in 12:00 AM the next day
+        days = {                     
+        1 : "saturday",
+        2 : "sunday",
+        3 : "monday",
+        4 : "tuesday",
+        5 : "wednesday",
+        6 : "thursday",
+        7 : "friday"
+        }
+        nofdays = math.floor((remains_hr / 24) + 1)
+        holdkey = None
+        for key, value in days.items():
+            if day != None and value == day.lower():
+                holdkey = key
+        new_day_key = (holdkey + nofdays) % 7
+        result_day = days[new_day_key]
+        print(result_day)
+        # tomorrow (Just the next day)
+        if remains_hr < 12: 
+            time_dur = "AM"
+            
 
-    # if time_dur.lower() == "pm":
-    #     limit_hr = 12 - time_t[0]
-    #     limit_min = 60 - time_t[1]
-
-    # else:
-    #     limit_hr = 12 + (12 - time_t[0])
-    #     limit_min = 60 - time_t[1]
-
-    # if day != None:
-    #     result = f"{final_hours}:{final_min:02} {time_dur} {day}"
-    # else:
-    #     result = f"{final_hours}:{final_min:02} {time_dur}"
-        
-    # if dur_add[0] < limit_hr:    #still in the same day
-    #     if time_dur.upper() == "AM": # check if the added time will convert AM to PM
-    #         limit_mid_hr = limit_hr -12
-    #         limit_mid_min = 60 - time_t[1]
-    #         if dur_add[0] > limit_mid_hr or (dur_add[0] <= limit_mid_hr and dur_add[1] > limit_mid_min): 
-    #             time_dur = "PM"  
-    #         else:
-    #             time_dur = "AM"
-    #     return result
-    
-    # elif dur_add[0] == limit_hr:
-    #     if dur_add[1] >= limit_min:
-    #         time_dur = "AM"
-    #         day = "the next day"
-    #         return result
-        
-    # else: #dur_add[0] > limit_hr
-    #     remain_hr = dur_add[0] - limit_hr
-    #     days_count = math.ceil(remain_hr/24) + 1
-    #     fremain_hr = remain_hr % 24
-    #     if fremain_hr >=12 and time_dur == "PM":
-    #         time_dur = "AM"
-    #     else:
-    #         days_count -= 1
-    #         if time_dur == "AM":
-    #             time_dur = "PM"
-    #         else:
-    #             time_dur = "AM"
-    #     return result
-    return result
+    return " "
 #* testing the output
 
-print(add_time('3:00 PM', '3:10'))                         # 6:10 PM
-print(add_time('11:30 AM', '2:32', 'Monday'))              # 2:02 PM, Monday
-print(add_time('11:43 AM', '00:20'))                       # 12:03 PM
-# print(add_time('10:10 PM', '3:30'))                        # 1:40 AM (next day)
-# print(add_time('11:43 PM', '24:20', 'tueSday'))            # 12:03 AM, Thursday (2 days later)
-# print(add_time('6:30 PM', '205:12'))                       # 7:42 AM (9 days later)
+# print(add_time('3:00 PM', '3:10'))                         # 6:10 PM
+# print(add_time('11:30 AM', '2:32', 'Monday'))              # 2:02 PM, Monday
+# print(add_time('11:43 AM', '00:20'))                       # 12:03 PM
+print(add_time('10:10 PM', '3:30'))                        # 1:40 AM (next day)
+print(add_time('11:43 PM', '24:20', 'tueSday'))            # 12:03 AM, Thursday (2 days later)
+print(add_time('6:30 PM', '205:12'))                       # 7:42 AM (9 days later)
