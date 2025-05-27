@@ -51,7 +51,7 @@ def add_time(start: str, addition: str , day: str = None):
         else:
             time_dur = "PM"
         if day != None:
-            result = f"{final_hours}:{final_min:02} {time_dur} {day}"
+            result = f"{final_hours}:{final_min:02} {time_dur}, {day}"
         else:
             result = f"{final_hours}:{final_min:02} {time_dur}"
 
@@ -63,20 +63,24 @@ def add_time(start: str, addition: str , day: str = None):
             remains_hr -= 1
             remains_min = 60 - abs(remains_min) # Now / Once we reached this step we are in 12:00 AM the next day
         days = {                     
-        1 : "saturday",
-        2 : "sunday",
-        3 : "monday",
-        4 : "tuesday",
-        5 : "wednesday",
-        6 : "thursday",
-        7 : "friday"
+        1 : "Saturday",
+        2 : "Sunday",
+        3 : "Monday",
+        4 : "Tuesday",
+        5 : "Wednesday",
+        6 : "Thursday",
+        7 : "Friday"
         }
         nofdays = math.floor((remains_hr / 24) + 1)
         holdkey = None
         for key, value in days.items():
-            if day != None and value == day.lower():
+            if day != None and value.lower() == day.lower():
                 holdkey = key
-                new_day_key = (holdkey + nofdays) % 7
+                new_day_key = holdkey + nofdays
+                if new_day_key > 7:
+                    new_day_key = new_day_key % 7
+                else:
+                    new_day_key = new_day_key
                 result_day = days[new_day_key]
 
         # tomorrow (Just the next day)
@@ -84,18 +88,39 @@ def add_time(start: str, addition: str , day: str = None):
             time_dur = "AM"
         if remains_hr > 12 and remains_hr < 24:
             time_dur = "PM"
-            remain_hr -= 12
+            remains_hr -= 12
         if day != None:
-            result = f"{remains_hr}:{remains_min:02} {time_dur} {result_day} (next day)"
+            result = f"{remains_hr}:{remains_min:02} {time_dur}, {result_day} (next day)"
         else:
-            result = f"{final_hours}:{final_min:02} {time_dur} (next day)"
+            result = f"{remains_hr}:{remains_min:02} {time_dur} (next day)"
+
+        if nofdays > 1:
+            if remains_hr == 24:
+                remains_hr = 12
+            else:
+                remains_hr = remains_hr % 24
+            if remains_hr > 12:
+                remains_hr -= 12
+                time_dur = "PM"
+            elif remains_hr == 12:
+                remains_hr = 12
+                time_dur = "AM"
+            else:
+                time_dur = "AM"
+            if day != None:
+                result = f"{remains_hr}:{remains_min:02} {time_dur}, {result_day} ({nofdays} days later)"
+            else:
+                result = f"{remains_hr}:{remains_min:02} {time_dur} ({nofdays} days later)"
 
     return result
-#* testing the output
 
-# print(add_time('3:00 PM', '3:10'))                         # 6:10 PM
-# print(add_time('11:30 AM', '2:32', 'Monday'))              # 2:02 PM, Monday
-# print(add_time('11:43 AM', '00:20'))                       # 12:03 PM
+print(add_time('3:00 PM', '3:10'))                         # 6:10 PM
+print(add_time('11:30 AM', '2:32', 'Monday'))              # 2:02 PM, Monday
+print(add_time('11:43 AM', '00:20'))                       # 12:03 PM
 print(add_time('10:10 PM', '3:30'))                        # 1:40 AM (next day)
-# print(add_time('11:43 PM', '24:20', 'tueSday'))            # 12:03 AM, Thursday (2 days later)
-# print(add_time('6:30 PM', '205:12'))                       # 7:42 AM (9 days later)
+print(add_time('11:43 PM', '24:20', 'tueSday'))            # 12:03 AM, Thursday (2 days later)
+print(add_time('6:30 PM', '205:12'))                       # 7:42 AM (9 days later)
+print(add_time('11:59 PM', '24:05'))                       # 12:04 AM (2 days later). 
+print(add_time('11:59 PM', '24:05', 'Wednesday'))          # 12:04 AM, Friday (2 days later) 
+print(add_time('8:16 PM', '466:02'))                       # 6:18 AM (20 days later)
+print(add_time('8:16 PM', '466:02', 'tuesday'))            # 6:18 AM, Monday (20 days later)
